@@ -1,40 +1,26 @@
 'use client';
 
 import { useEffect } from 'react';
-import { pricing } from '@/lib/config';
+import { reapplyMamFromCookie } from '@/lib/analytics';
 
-// Fires the client-side Pixel Purchase event on the thank-you page.
-// The eventID is the Razorpay paymentId (passed via ?p=...) so it dedupes with
-// the server-side CAPI event of the same name + id. The test-coupon path uses
-// a `tgotest_*` payment_id; we skip firing for those so QA runs don't pollute
-// production conversion counts.
+// /thank-you is reached via client-side router.push() from CheckoutForm,
+// so the inline pixel script in app/layout.tsx (afterInteractive) doesn't
+// re-execute. We do two things on mount:
+//   1. Reapply MAM from the fm4_mam cookie so this PageView ships with
+//      the full hashed identity (em, ph, fn, ln, ct, country, external_id).
+//   2. Fire fbq('track', 'PageView') manually so Meta sees the conversion
+//      landing as its own browser-side event (not just the prior /checkout
+//      PageView). fbq is undefined when pricing.client.trackingEnabled is
+//      false (₹1 test mode), so both calls no-op naturally in that case.
+//
+// No browser-side Purchase event is ever fired — the conversion signal
+// comes exclusively from server CAPI (see /api/razorpay/verify-payment),
+// which ships Purchase + sales with EMQ 9.5+ via SHA-256 customer info.
 export default function ThankYouTracker() {
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    try {
-      const sp = new URLSearchParams(window.location.search);
-      const paymentId = sp.get('p') ?? '';
-      if (!paymentId) return;
-      if (paymentId.startsWith('tgotest_')) return;
-
-      const w = window as unknown as {
-        fbq?: (
-          cmd: string,
-          event: string,
-          data?: Record<string, unknown>,
-          opts?: { eventID?: string }
-        ) => void;
-      };
-      if (typeof w.fbq === 'function') {
-        w.fbq(
-          'track',
-          'Purchase',
-          { currency: pricing.client.currency, value: pricing.client.inr },
-          { eventID: paymentId }
-        );
-      }
-    } catch {
-      /* noop */
+    reapplyMamFromCookie();
+    if (typeof window !== 'undefined' && window.fbq) {
+      window.fbq('track', 'PageView');
     }
   }, []);
 

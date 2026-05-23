@@ -28,6 +28,13 @@ export const pricing = {
   savings: SERVER_ORIGINAL - SERVER_PRICE,
   currency: 'INR',
 
+  // Master kill-switch for ALL ad-platform / automation events.
+  // Set PRICE_INR=1 in the test environment (Vercel preview) → no Meta
+  // Pixel script renders, no CAPI fires, no Pabbly webhook from real
+  // payments. Set PRICE_INR=97 in production → everything fires.
+  // Same gate mirrored on the client via NEXT_PUBLIC_PRICE_INR.
+  trackingEnabled: SERVER_PRICE > 1,
+
   // Mirror values for the client bundle
   client: {
     inr: CLIENT_PRICE,
@@ -35,6 +42,7 @@ export const pricing = {
     savings: CLIENT_ORIGINAL - CLIENT_PRICE,
     paise: CLIENT_PRICE * 100,
     currency: 'INR' as const,
+    trackingEnabled: CLIENT_PRICE > 1,
   },
 };
 
@@ -53,7 +61,6 @@ export const brand = {
     subtitle: 'Your coach for this workshop',
   },
   guarantee: '🛡 100% Money Back Guarantee — Zero Risk',
-  capiEventName: 'Workshop Purchase',
   capiCurrency: 'INR',
   paymentTimezone: 'Asia/Kolkata',
   thankYouPath: '/thank-you',

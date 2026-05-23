@@ -2,54 +2,96 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { brand, pricing } from '@/lib/config';
 
-// ── OPTIONAL: Meta Conversions API ────────────────────────────────────
+const CUSTOM_EVENT_NAME = 'sales';
+const META_GRAPH_VERSION = 'v25.0';
+
+function sha256(value: string): string {
+  return crypto.createHash('sha256').update(value).digest('hex');
+}
+
+// ── Meta Conversions API ──────────────────────────────────────────────
+// One HTTP call per paid order, containing TWO events:
+//   1. Purchase  — standard, optimizer target (campaign opt + global ML priors)
+//   2. sales     — custom, internal source-of-truth label
+// Both share event_id (= razorpay payment_id) so they dedupe against any
+// browser-side event of the same name+id (we don't fire any by default).
+//
+// user_data ships 11 matching signals:
+//   Hashed (SHA-256 hex): em, ph, fn, ln, ct, country, external_id
+//   Raw (no hash):        fbc, fbp, client_ip_address, client_user_agent
 async function sendMetaCapiEvent(params: {
   pixelId: string;
   accessToken: string;
   paymentId: string;
   email: string;
-  phone: string;
+  phone: string;          // dial code + number, raw
+  firstName: string;
+  lastName: string;
+  city: string;
+  countryCode: string;    // 2-letter ISO
+  eventSourceUrl: string;
   fbc: string | undefined;
   fbp: string | undefined;
   clientIp: string | undefined;
   clientUserAgent: string | undefined;
 }) {
-  const hashedEmail = crypto
-    .createHash('sha256')
-    .update(params.email.trim().toLowerCase())
-    .digest('hex');
+  const normalisedEmail = params.email.trim().toLowerCase();
+  const hashedEmail = sha256(normalisedEmail);
 
+  // Phone: digits only (E.164 without +) before hashing.
   const rawPhone = params.phone.replace(/\D/g, '');
-  const hashedPhone = rawPhone
-    ? crypto.createHash('sha256').update(rawPhone).digest('hex')
-    : undefined;
+  const hashedPhone = rawPhone ? sha256(rawPhone) : undefined;
 
-  const event = {
-    event_name: brand.capiEventName,
+  // external_id: stable per-user identifier. Must match the browser MAM
+  // value (which uses the same sha256(email) derivation in lib/analytics.ts).
+  const externalId = sha256(normalisedEmail);
+
+  const fn = params.firstName.trim().toLowerCase();
+  const ln = params.lastName.trim().toLowerCase();
+  const ct = params.city.trim().toLowerCase().replace(/[^a-z]/g, '');
+  const country = params.countryCode.trim().toLowerCase();
+
+  const hashedFn      = fn      ? sha256(fn)      : undefined;
+  const hashedLn      = ln      ? sha256(ln)      : undefined;
+  const hashedCt      = ct      ? sha256(ct)      : undefined;
+  const hashedCountry = country ? sha256(country) : undefined;
+
+  const baseEvent = {
     event_time: Math.floor(Date.now() / 1000),
     event_id: params.paymentId,
     action_source: 'website',
+    event_source_url: params.eventSourceUrl,
     user_data: {
       em: [hashedEmail],
-      ...(hashedPhone && { ph: [hashedPhone] }),
+      ...(hashedPhone   && { ph:      [hashedPhone] }),
+      ...(hashedFn      && { fn:      [hashedFn] }),
+      ...(hashedLn      && { ln:      [hashedLn] }),
+      ...(hashedCt      && { ct:      [hashedCt] }),
+      ...(hashedCountry && { country: [hashedCountry] }),
+      external_id: [externalId],
       ...(params.fbc && { fbc: params.fbc }),
       ...(params.fbp && { fbp: params.fbp }),
       ...(params.clientUserAgent && { client_user_agent: params.clientUserAgent }),
-      ...(params.clientIp && { client_ip_address: params.clientIp }),
+      ...(params.clientIp        && { client_ip_address: params.clientIp }),
     },
     custom_data: {
-      currency: brand.capiCurrency,
-      value: pricing.inr,
+      currency:   brand.capiCurrency,
+      value:      pricing.inr,
       payment_id: params.paymentId,
     },
   };
 
+  const events = [
+    { ...baseEvent, event_name: 'Purchase' },
+    { ...baseEvent, event_name: CUSTOM_EVENT_NAME },
+  ];
+
   const res = await fetch(
-    `https://graph.facebook.com/v25.0/${params.pixelId}/events?access_token=${params.accessToken}`,
+    `https://graph.facebook.com/${META_GRAPH_VERSION}/${params.pixelId}/events?access_token=${params.accessToken}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ data: [event] }),
+      body: JSON.stringify({ data: events }),
     }
   );
 
@@ -83,13 +125,14 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const {
-      orderId, paymentId, signature, customer, utm,
+      orderId, paymentId, signature, customer, utm, eventSourceUrl,
     }: {
       orderId: string;
       paymentId: string;
       signature: string;
       customer: CustomerData;
       utm: UtmData;
+      eventSourceUrl?: string;
     } = body;
 
     if (!orderId || !paymentId || !signature) {
@@ -147,6 +190,16 @@ export async function POST(req: NextRequest) {
 
     console.log('[verify-payment] Verified purchase:', { paymentId, email: customer.email });
 
+    // Test-mode gate. When PRICE_INR=1 (Vercel preview / staging), skip ALL
+    // downstream side effects so ₹1 sanity-check payments don't pollute Meta
+    // Events Manager or the Pabbly automation sheet. Set PRICE_INR=97 in
+    // production to re-enable. (The QA-coupon path in /api/checkout/free-order
+    // is independent — it has its own is_test=yes tag.)
+    if (!pricing.trackingEnabled) {
+      console.log('[verify-payment] Tracking disabled (PRICE_INR=1) — skipping Pabbly + Meta CAPI');
+      return NextResponse.json({ success: true, paymentId });
+    }
+
     // Fire Pabbly webhook (non-blocking — errors never surface to the user)
     const webhookUrl = process.env.PABBLY_WEBHOOK_URL;
     if (webhookUrl) {
@@ -180,16 +233,26 @@ export async function POST(req: NextRequest) {
         undefined;
       const clientUserAgent = req.headers.get('user-agent') ?? undefined;
       const fullPhone = `${customer.dialCode}${customer.phone}`;
+      const resolvedEventSourceUrl =
+        eventSourceUrl && eventSourceUrl.length > 0
+          ? eventSourceUrl
+          : `https://fm4therapyindia.com/product-checkout`;
+
       try {
         await sendMetaCapiEvent({
-          pixelId: metaPixelId,
-          accessToken: metaAccessToken,
+          pixelId:           metaPixelId,
+          accessToken:       metaAccessToken,
           paymentId,
-          email: customer.email,
-          phone: fullPhone,
+          email:             customer.email,
+          phone:             fullPhone,
+          firstName:         customer.firstName,
+          lastName:          customer.lastName,
+          city:              customer.city,
+          countryCode:       customer.countryCode,
+          eventSourceUrl:    resolvedEventSourceUrl,
           fbc, fbp, clientIp, clientUserAgent,
         });
-        console.log('[verify-payment] Meta CAPI event sent');
+        console.log('[verify-payment] Meta CAPI events sent (Purchase + sales)');
       } catch (err) {
         console.error('[verify-payment] Meta CAPI error:', err);
       }

@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import './globals.css';
-import { brand } from '@/lib/config';
+import { brand, pricing } from '@/lib/config';
 
 export const metadata: Metadata = {
   title: `${brand.name} — Overcome Spine, Knee & Neck Pain Naturally`,
@@ -73,8 +73,11 @@ export default function RootLayout({
           `}</Script>
         ) : null}
 
-        {/* Meta Pixel base + PageView — fires only when NEXT_PUBLIC_META_PIXEL_ID is set */}
-        {META_PIXEL_ID ? (
+        {/* Meta Pixel base + PageView — fires only when NEXT_PUBLIC_META_PIXEL_ID
+            is set AND we're not in ₹1 test mode (NEXT_PUBLIC_PRICE_INR > 1).
+            In test mode the script never loads so window.fbq stays undefined,
+            and every downstream MAM / PageView call no-ops naturally. */}
+        {META_PIXEL_ID && pricing.client.trackingEnabled ? (
           <>
             <Script id="meta-pixel-init" strategy="afterInteractive">{`
               !function(f,b,e,v,n,t,s)
@@ -86,6 +89,15 @@ export default function RootLayout({
               s.parentNode.insertBefore(t,s)}(window, document,'script',
               'https://connect.facebook.net/en_US/fbevents.js');
               fbq('init', '${META_PIXEL_ID}');
+              try {
+                var m = document.cookie.match(/(?:^|;\\s*)fm4_mam=([^;]+)/);
+                if (m) {
+                  var mam = JSON.parse(decodeURIComponent(m[1]));
+                  if (mam && typeof mam === 'object' && Object.keys(mam).length) {
+                    fbq('init', '${META_PIXEL_ID}', mam);
+                  }
+                }
+              } catch (e) {}
               fbq('track', 'PageView');
             `}</Script>
             <noscript>

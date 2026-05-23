@@ -6,6 +6,7 @@ import { isValidPhoneNumber } from 'libphonenumber-js';
 import { COUNTRIES, type Country } from '@/lib/countries';
 import { captureUtm, restoreUtm, type UtmData } from '@/lib/utm';
 import { brand, pricing, submitButtonLabel, saveBadgeText } from '@/lib/config';
+import { setMetaAdvancedMatching } from '@/lib/analytics';
 
 // ── Types ───────────────────────────────────────────────────────────
 interface FormFields {
@@ -320,6 +321,34 @@ export default function CheckoutForm() {
     }
   }, []);
 
+  // Fire MAM as soon as the form is fully filled + valid, independent of
+  // whether the user pays. Identifies any subsequent PageView and persists
+  // the hashed identity to the fm4_mam cookie for cross-page inheritance.
+  // Debounced 500ms so we don't refire on every keystroke.
+  useEffect(() => {
+    const allFilled =
+      fields.firstName.trim() &&
+      fields.lastName.trim() &&
+      fields.email.trim() &&
+      fields.city.trim() &&
+      fields.phone.trim();
+    if (!allFilled) return;
+    const currentErrors = validateFields(fields, countryCode);
+    if (Object.keys(currentErrors).length > 0) return;
+    const selected = COUNTRIES.find((c) => c.code === countryCode) ?? COUNTRIES[0];
+    const timer = setTimeout(() => {
+      void setMetaAdvancedMatching({
+        email:     fields.email,
+        phone:     `${selected.dial}${fields.phone}`,
+        firstName: fields.firstName,
+        lastName:  fields.lastName,
+        city:      fields.city,
+        country:   countryCode,
+      });
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [fields, countryCode]);
+
   const showToast = useCallback((msg: string) => {
     setToast(msg);
     if (toastTimer.current) clearTimeout(toastTimer.current);
@@ -477,6 +506,21 @@ export default function CheckoutForm() {
   async function handlePaymentSuccess(response: RazorpayResponse, dialCode: string) {
     try {
       const utm = restoreUtm();
+
+      // Refresh MAM with the latest form values so the cookie carries the
+      // final identity into /thank-you and every subsequent PageView.
+      await setMetaAdvancedMatching({
+        email:     fields.email,
+        phone:     `${dialCode}${fields.phone}`,
+        firstName: fields.firstName,
+        lastName:  fields.lastName,
+        city:      fields.city,
+        country:   countryCode,
+      });
+
+      const eventSourceUrl =
+        typeof window !== 'undefined' ? window.location.href : '';
+
       const verifyRes = await fetch('/api/razorpay/verify-payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -495,6 +539,7 @@ export default function CheckoutForm() {
             customerType: fields.customerType,
           },
           utm,
+          eventSourceUrl,
         }),
       });
       const result = await verifyRes.json();
