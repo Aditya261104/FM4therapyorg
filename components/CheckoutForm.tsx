@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { isValidPhoneNumber } from 'libphonenumber-js';
 import { COUNTRIES, type Country } from '@/lib/countries';
 import { captureUtm, restoreUtm, type UtmData } from '@/lib/utm';
-import { brand, pricing, submitButtonLabel, saveBadgeText } from '@/lib/config';
+import { brand, pricing, schedule, submitButtonLabel, saveBadgeText } from '@/lib/config';
 import { setMetaAdvancedMatching } from '@/lib/analytics';
 
 // ── Types ───────────────────────────────────────────────────────────
@@ -260,8 +260,8 @@ function SummaryBody({ finalInr, discountInr }: { finalInr: number; discountInr:
 
       <div className="schedule-card">
         <div className="schedule-card__head">Workshop Schedule</div>
-        <p><strong>16th May</strong> – 8:00 PM (Day 1)</p>
-        <p><strong>17th May</strong> – 10:00 AM (Day 2)</p>
+        <p><strong>Day 1</strong> – {schedule.day1}</p>
+        <p><strong>Day 2</strong> – {schedule.day2}</p>
         <p>Language: Hindi &amp; English</p>
       </div>
 

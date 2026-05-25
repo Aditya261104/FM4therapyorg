@@ -2,13 +2,18 @@ import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import './globals.css';
 import { brand, pricing } from '@/lib/config';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 export const metadata: Metadata = {
   title: `${brand.name} — Overcome Spine, Knee & Neck Pain Naturally`,
   description:
     'Live 2-day workshop with Sourobh Kulkorni. Overcome spine, knee & neck pain naturally — without medicines, surgeries, physio, chiro or oil massages.',
   icons: {
-    icon: `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2300984B'/><text x='50%25' y='56%25' font-family='sans-serif' font-size='12' font-weight='800' fill='white' text-anchor='middle' dominant-baseline='middle'>FM4</text></svg>`,
+    icon: [
+      { url: '/Images%20Sourabh/logo.webp', type: 'image/webp' },
+    ],
+    shortcut: '/Images%20Sourabh/logo.webp',
+    apple: '/Images%20Sourabh/logo.webp',
   },
 };
 
@@ -39,6 +44,9 @@ export default function RootLayout({
       </head>
       <body suppressHydrationWarning>
         {children}
+
+        {/* Floating language picker (every page) */}
+        <LanguageSwitcher />
 
         {/* Razorpay checkout modal SDK */}
         <Script

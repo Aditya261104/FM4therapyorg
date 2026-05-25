@@ -1,6 +1,6 @@
 import Footer from '@/components/Footer';
 import LandingClient, { REVIEWS_DATA } from '@/components/LandingClient';
-import { brand, pricing } from '@/lib/config';
+import { brand, pricing, schedule } from '@/lib/config';
 
 const VIDEO_TESTIMONIALS = [
   { thumb: '/Images%20Sourabh/video1.jpg', url: 'https://player.vimeo.com/video/1037337143?h=cd71981f29' },
@@ -37,9 +37,10 @@ export default function LandingPage() {
         <div className="container">
           <div className="hero__head reveal">
             <span className="hero__eyebrow">Especially for Busy Professionals, Entrepreneurs &amp; their Loved Ones</span>
-            <h1>
-              Learn How to Overcome<br />
-              <span className="green">Spine, Knee &amp; Neck Pain Naturally</span> for Long-Term Relief
+            <h1 className="hero__title">
+              <span className="hero__title-line">Learn How to Overcome</span>
+              <span className="hero__title-line green">Spine, Knee &amp; Neck Pain Naturally</span>
+              <span className="hero__title-line">for Long-Term Relief</span>
             </h1>
             <p className="hero__sub">Without any Medicines, Surgeries, Physio, Chiro, or Oil Massages</p>
 
@@ -49,7 +50,14 @@ export default function LandingPage() {
               <span className="hero__reviews-sep" aria-hidden="true">|</span>
               <span>1000+ Reviews On</span>
               <span className="hero__reviews-google" aria-hidden="true">
-                <span className="hero__reviews-google__name">Google</span>
+                <span className="hero__reviews-google__name">
+                  <span style={{ color: '#4285F4' }}>G</span>
+                  <span style={{ color: '#EA4335' }}>o</span>
+                  <span style={{ color: '#FBBC05' }}>o</span>
+                  <span style={{ color: '#4285F4' }}>g</span>
+                  <span style={{ color: '#34A853' }}>l</span>
+                  <span style={{ color: '#EA4335' }}>e</span>
+                </span>
                 <span className="hero__reviews-google__sub">Reviews ★★★★★</span>
               </span>
             </div>
@@ -66,8 +74,8 @@ export default function LandingPage() {
 
             <div className="hero__col-right reveal reveal-delay-1">
               <div className="info-grid">
-                <InfoCard label="Date" value="16th, 17th May" icon={<CalendarIcon/>} />
-                <InfoCard label="Time" value="16th – 8:00 PM" sub="17th – 10:00 AM" icon={<ClockIcon/>} />
+                <InfoCard label="Date" value={schedule.dateRange} icon={<CalendarIcon/>} />
+                <InfoCard label="Time" value={schedule.day1} sub={schedule.day2} icon={<ClockIcon/>} />
                 <InfoCard label="Live Workshop" value="2 Days" icon={<VideoIcon/>} />
                 <InfoCard label="Language" value="Hindi & English" icon={<GlobeIcon/>} />
               </div>
@@ -199,9 +207,9 @@ export default function LandingPage() {
               <div className="timeline__pill">Identifying The Root Cause (FM-1)</div>
               <p>Identify the <strong>real cause of your spine, neck, or knee pain</strong> with cutting-edge assessment tests that go beyond basic diagnosis.</p>
             </article>
-            <div className="timeline__icon timeline__icon--1 reveal" aria-hidden="true"><img src="/Images%20Sourabh/program1.svg" alt="" /></div>
+            <div className="timeline__icon timeline__icon--1 reveal" aria-hidden="true"><img src="/Images%20Sourabh/icon-timeline-1.svg" alt="" /></div>
 
-            <div className="timeline__icon timeline__icon--2 reveal" aria-hidden="true"><img src="/Images%20Sourabh/program2.svg" alt="" /></div>
+            <div className="timeline__icon timeline__icon--2 reveal" aria-hidden="true"><img src="/Images%20Sourabh/icon-timeline-2.svg" alt="" /></div>
             <article className="timeline__step timeline__step--right timeline__step--2 reveal">
               <div className="timeline__num">Step 2</div>
               <div className="timeline__pill">Releasing Your Trigger Points (FM-2)</div>
@@ -213,9 +221,9 @@ export default function LandingPage() {
               <div className="timeline__pill">Strengthening Weaker Muscles (FM-3)</div>
               <p><strong>Easy exercises to help you rebuild strength</strong> in weak areas, so you can move safely and confidently</p>
             </article>
-            <div className="timeline__icon timeline__icon--3 reveal" aria-hidden="true"><img src="/Images%20Sourabh/program3.svg" alt="" /></div>
+            <div className="timeline__icon timeline__icon--3 reveal" aria-hidden="true"><img src="/Images%20Sourabh/icon-timeline-3.svg" alt="" /></div>
 
-            <div className="timeline__icon timeline__icon--4 reveal" aria-hidden="true"><img src="/Images%20Sourabh/program4.svg" alt="" /></div>
+            <div className="timeline__icon timeline__icon--4 reveal" aria-hidden="true"><img src="/Images%20Sourabh/icon-timeline-4.svg" alt="" /></div>
             <article className="timeline__step timeline__step--right timeline__step--4 reveal">
               <div className="timeline__num">Step 4</div>
               <div className="timeline__pill">Increasing Your Flexibility (FM-4)</div>
@@ -238,10 +246,10 @@ export default function LandingPage() {
             <h2>Who is this Workshop for?</h2>
           </div>
           <div className="audience">
-            <Aud src="workshop1.svg" title="Busy Business Owners" copy="Those struggling to manage business due to frustrating back, neck or knee pain" />
-            <Aud src="workshop2.svg" title="Desk Job Employees"   copy="Anyone who spends long hours sitting and wants to improve their posture or eliminate back-induced pain" delay={1} />
-            <Aud src="workshop3.svg" title="Older Adults (55+)"   copy="Those seeking gentle yet effective techniques to relieve pain and improve posture for better mobility and comfort" delay={2} />
-            <Aud src="workshop4.svg" title="Busy or Working Moms" copy="Women facing difficulties in managing day-to-day home or work activities due to body pain" delay={3} />
+            <Aud src="icon-audience-1.svg" title="Busy Business Owners" copy="Those struggling to manage business due to frustrating back, neck or knee pain" />
+            <Aud src="icon-audience-2.svg" title="Desk Job Employees"   copy="Anyone who spends long hours sitting and wants to improve their posture or eliminate back-induced pain" delay={1} />
+            <Aud src="icon-audience-3.svg" title="Older Adults (55+)"   copy="Those seeking gentle yet effective techniques to relieve pain and improve posture for better mobility and comfort" delay={2} />
+            <Aud src="icon-audience-4.svg" title="Busy or Working Moms" copy="Women facing difficulties in managing day-to-day home or work activities due to body pain" delay={3} />
           </div>
         </div>
       </section>
@@ -325,7 +333,7 @@ export default function LandingPage() {
             <FaqItem q="How do you deliver this therapy?" a="The 2-day live workshop is delivered entirely online via a private video conferencing room. You receive your access link by email and WhatsApp immediately after booking. The workshop is held in both Hindi and English so the entire family can participate." />
             <FaqItem q="Do I need any special equipment to join this Workshop?" a="No special equipment is needed. A smartphone, tablet, or laptop with a stable internet connection is enough. Ideally have a yoga mat or a flat carpeted area, and wear loose, comfortable clothing so you can move freely." />
             <FaqItem q="How is this Workshop different from anything else in the market?" a="Most programs focus on temporary symptom relief — painkillers, massages, or generic exercises. FM4 Therapy is a 4-phase root-cause framework refined over 19 years and 10,000+ clients. Every participant gets a personalised pain assessment LIVE." />
-            <FaqItem q="How can I join the Workshop?" a={`Click any "Book Now" button on this page, complete the secure booking through Razorpay, and you'll receive your workshop access link by email and WhatsApp. See you live on 16th and 17th May.`} />
+            <FaqItem q="How can I join the Workshop?" a={`Click any "Book Now" button on this page, complete the secure booking through Razorpay, and you'll receive your workshop access link by email and WhatsApp. See you live on ${schedule.faqDates}.`} />
           </div>
         </div>
       </section>
@@ -414,7 +422,7 @@ function Marquee({ direction, label, videos }: { direction: 'left' | 'right'; la
               aria-label="Play client testimonial"
               {...(dup ? { 'aria-hidden': true, tabIndex: -1 } : {})}
             >
-              <img className="video-tile__thumb" src={v.thumb} alt="" loading="lazy" />
+              <img className="video-tile__thumb" src={v.thumb} alt="" loading="eager" decoding="async" width={1280} height={720} />
               <span className="video-tile__play" aria-hidden="true"></span>
             </button>
           ))

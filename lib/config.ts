@@ -46,21 +46,48 @@ export const pricing = {
   },
 };
 
+// ── Workshop schedule — every date/time string on the site reads from here.
+// Override any of these via .env (NEXT_PUBLIC_WORKSHOP_*) without touching code.
+export const schedule = {
+  /** Used on the Date info card across /, /hi, /mar (e.g. "16th, 17th May"). */
+  dateRange:
+    process.env.NEXT_PUBLIC_WORKSHOP_DATE_RANGE || '16th, 17th May',
+  /** Time info card — Day 1 line (e.g. "16th – 8:00 PM"). Also reused in checkout. */
+  day1:
+    process.env.NEXT_PUBLIC_WORKSHOP_DAY1 || '16th – 8:00 PM',
+  /** Time info card — Day 2 line (e.g. "17th – 10:00 AM"). Also reused in checkout. */
+  day2:
+    process.env.NEXT_PUBLIC_WORKSHOP_DAY2 || '17th – 10:00 AM',
+  /** Sentence form used in FAQ answers across all 3 languages (e.g. "16th and 17th May"). */
+  faqDates:
+    process.env.NEXT_PUBLIC_WORKSHOP_FAQ_DATES || '16th and 17th May',
+  /** Sign-off line at the bottom of the Thank You page (e.g. "See you LIVE on 16th May at 8:00 PM"). */
+  thankYouSignoff:
+    process.env.NEXT_PUBLIC_WORKSHOP_SIGNOFF || 'See you LIVE on 16th May at 8:00 PM',
+  /** Compact event line used by Razorpay modal + cross-funnel surfaces. */
+  eventLine:
+    process.env.NEXT_PUBLIC_WORKSHOP_EVENT_LINE ||
+    '16th & 17th May · 8 PM / 10 AM IST',
+  /** Shorter date span used in the Razorpay modal description. */
+  modalDateSpan:
+    process.env.NEXT_PUBLIC_WORKSHOP_MODAL_DATES || '16th–17th May',
+};
+
 // All brand / copy strings live here so editing one field updates the whole site.
 export const brand = {
   name: 'FM4 Therapy',
   short: 'FM4',
   productName: 'Pain Free with FM4 Workshop',
-  eventLine: '16th & 17th May · 8 PM / 10 AM IST',
+  eventLine: schedule.eventLine,
   modalName: 'FM4 Therapy',
-  modalDescription: 'Pain Free with FM4 Workshop · 16th–17th May',
+  modalDescription: `Pain Free with FM4 Workshop · ${schedule.modalDateSpan}`,
   themeColor: '#00984B',
   coach: {
     name: 'Sourobh Kulkorni',
     initial: 'S',
     subtitle: 'Your coach for this workshop',
   },
-  guarantee: '🛡 100% Money Back Guarantee — Zero Risk',
+  guarantee: '100% Money Back Guarantee — Zero Risk',
   capiCurrency: 'INR',
   paymentTimezone: 'Asia/Kolkata',
   thankYouPath: '/thank-you',

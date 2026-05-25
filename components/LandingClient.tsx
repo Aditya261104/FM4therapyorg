@@ -94,6 +94,27 @@ export default function LandingClient() {
       slides[sliderIdx].classList.add('is-active');
     }, 3500) : null;
 
+    // 5a. Hero VSL — inline workshop preview (replaces the poster with a Vimeo iframe)
+    const HERO_VIDEO_URL = 'https://player.vimeo.com/video/1109262583?h=9b74413547';
+    const vslContainer = document.getElementById('vslContainer');
+    let vslOff: (() => void) | null = null;
+    if (vslContainer) {
+      const playHero = () => {
+        const sep = HERO_VIDEO_URL.includes('?') ? '&' : '?';
+        vslContainer.innerHTML = `<iframe src="${HERO_VIDEO_URL}${sep}autoplay=1&playsinline=1" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media" allowfullscreen title="Workshop preview"></iframe>`;
+      };
+      const onKey = (e: Event) => {
+        const k = (e as KeyboardEvent).key;
+        if (k === 'Enter' || k === ' ') { e.preventDefault(); playHero(); }
+      };
+      vslContainer.addEventListener('click', playHero);
+      vslContainer.addEventListener('keydown', onKey);
+      vslOff = () => {
+        vslContainer.removeEventListener('click', playHero);
+        vslContainer.removeEventListener('keydown', onKey);
+      };
+    }
+
     // 5. Video modal (Vimeo iframe injection)
     const modal  = document.getElementById('videoModal');
     const player = document.getElementById('videoModalPlayer');
@@ -195,6 +216,7 @@ export default function LandingClient() {
       if (close) close.removeEventListener('click', dismissModal);
       if (soundBtn) soundBtn.removeEventListener('click', soundClick);
       tileHandlers.forEach(off => off());
+      if (vslOff) vslOff();
     };
   }, []);
 

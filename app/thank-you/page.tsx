@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Footer from '@/components/Footer';
 import ThankYouTracker from '@/components/ThankYouTracker';
-import { brand } from '@/lib/config';
+import { brand, schedule } from '@/lib/config';
 
 export const metadata: Metadata = {
   title: 'Thank You · FM4 Therapy',
@@ -33,7 +33,7 @@ export default function ThankYouPage() {
               Click Here to Join Our Community Now
             </a>
 
-            <p className="thanks__signoff">See you LIVE on 16th May at 8:00 PM ✨</p>
+            <p className="thanks__signoff">{schedule.thankYouSignoff} ✨</p>
           </div>
         </div>
       </section>
