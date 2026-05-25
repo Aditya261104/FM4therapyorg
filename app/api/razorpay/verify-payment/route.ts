@@ -236,7 +236,7 @@ export async function POST(req: NextRequest) {
       const resolvedEventSourceUrl =
         eventSourceUrl && eventSourceUrl.length > 0
           ? eventSourceUrl
-          : `https://fm4therapyindia.com/product-checkout`;
+          : `https://www.fm4therapyindia.org/product-checkout`;
 
       try {
         await sendMetaCapiEvent({

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { isValidPhoneNumber } from 'libphonenumber-js';
 import { COUNTRIES, type Country } from '@/lib/countries';
-import { captureUtm, restoreUtm, type UtmData } from '@/lib/utm';
+import { captureLandingParams, restoreLandingParams, restoreUtm, type UtmData } from '@/lib/utm';
 import { brand, pricing, schedule, submitButtonLabel, saveBadgeText } from '@/lib/config';
 import { setMetaAdvancedMatching } from '@/lib/analytics';
 
@@ -315,10 +315,11 @@ export default function CheckoutForm() {
   const isFree = couponPercent === 100;
 
   useEffect(() => {
-    const sp = new URLSearchParams(window.location.search);
-    if (sp.has('utm_source') || sp.has('utm_medium') || sp.has('utm_campaign')) {
-      captureUtm(sp);
-    }
+    // Capture EVERY URL param on landing (or arriving direct at /checkout) so
+    // the full attribution context — utm_*, fbclid, gclid, gad_source, custom
+    // ad-network params, A/B flags — is preserved through the funnel and
+    // forwarded into /thank-you after a successful payment.
+    captureLandingParams(new URLSearchParams(window.location.search));
   }, []);
 
   // Fire MAM as soon as the form is fully filled + valid, independent of
@@ -446,12 +447,12 @@ export default function CheckoutForm() {
         const result = await res.json();
         if (!result.success) throw new Error(result.error ?? 'Could not place free order.');
 
-        const params = new URLSearchParams({ funnel: brand.funnelSlug });
-        if (utm.source)   params.set('utm_source',   utm.source);
-        if (utm.medium)   params.set('utm_medium',   utm.medium);
-        if (utm.campaign) params.set('utm_campaign', utm.campaign);
-        if (utm.content)  params.set('utm_content',  utm.content);
-        if (utm.term)     params.set('utm_term',     utm.term);
+        // Forward EVERY landing param to /thank-you so downstream tooling
+        // (Pabbly automations, analytics dashboards, partner pixels) keeps the
+        // full attribution context. brand.funnelSlug and `p` (paymentId) are
+        // added last so they override any same-named param from the URL.
+        const params = new URLSearchParams(restoreLandingParams());
+        params.set('funnel', brand.funnelSlug);
         if (result.paymentId) params.set('p', result.paymentId);
         router.push(`${brand.thankYouPath}?${params.toString()}`);
       } catch (err) {
@@ -545,12 +546,10 @@ export default function CheckoutForm() {
       const result = await verifyRes.json();
       if (!result.success) throw new Error(result.error ?? 'Payment verification failed.');
 
-      const params = new URLSearchParams({ funnel: brand.funnelSlug });
-      if (utm.source)   params.set('utm_source',   utm.source);
-      if (utm.medium)   params.set('utm_medium',   utm.medium);
-      if (utm.campaign) params.set('utm_campaign', utm.campaign);
-      if (utm.content)  params.set('utm_content',  utm.content);
-      if (utm.term)     params.set('utm_term',     utm.term);
+      // Forward EVERY landing param to /thank-you — same rationale as the
+      // coupon path above.
+      const params = new URLSearchParams(restoreLandingParams());
+      params.set('funnel', brand.funnelSlug);
       params.set('p', response.razorpay_payment_id);
       router.push(`${brand.thankYouPath}?${params.toString()}`);
     } catch (err) {

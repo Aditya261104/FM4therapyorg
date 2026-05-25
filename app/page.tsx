@@ -1,5 +1,6 @@
 import Footer from '@/components/Footer';
 import LandingClient, { REVIEWS_DATA } from '@/components/LandingClient';
+import CheckoutLink from '@/components/CheckoutLink';
 import { brand, pricing, schedule } from '@/lib/config';
 
 const VIDEO_TESTIMONIALS = [
@@ -81,12 +82,12 @@ export default function LandingPage() {
               </div>
 
               <div className="cta-block hero__cta">
-                <a href="/product-checkout" className="btn btn--cta btn--lg hero__cta-btn">
+                <CheckoutLink className="btn btn--cta btn--lg hero__cta-btn">
                   <span className="hero__cta-btn__main">
                     Book Now – Get 81% OFF
                     <span className="hero__cta-btn__arrow" aria-hidden="true">→</span>
                   </span>
-                </a>
+                </CheckoutLink>
                 <span className="guarantee">100% money back guarantee</span>
               </div>
 
@@ -136,7 +137,7 @@ export default function LandingPage() {
           </p>
 
           <div className="cta-block reveal">
-            <a href="/product-checkout" className="btn btn--cta btn--lg">{CTA}</a>
+            <CheckoutLink className="btn btn--cta btn--lg">{CTA}</CheckoutLink>
             <span className="guarantee">100% money back guarantee</span>
           </div>
         </div>
@@ -181,7 +182,7 @@ export default function LandingPage() {
             </article>
           </div>
           <div className="cta-block mt-3 reveal">
-            <a href="/product-checkout" className="btn btn--cta btn--lg">{CTA}</a>
+            <CheckoutLink className="btn btn--cta btn--lg">{CTA}</CheckoutLink>
             <span className="guarantee">100% money back guarantee</span>
           </div>
         </div>
@@ -232,7 +233,7 @@ export default function LandingPage() {
           </div>
 
           <div className="cta-block reveal mt-3">
-            <a href="/product-checkout" className="btn btn--cta btn--lg">{CTA}</a>
+            <CheckoutLink className="btn btn--cta btn--lg">{CTA}</CheckoutLink>
             <span className="guarantee">100% money back guarantee</span>
           </div>
         </div>
@@ -297,7 +298,7 @@ export default function LandingPage() {
           </div>
 
           <div className="cta-block reveal mt-3">
-            <a href="/product-checkout" className="btn btn--cta btn--lg">{CTA}</a>
+            <CheckoutLink className="btn btn--cta btn--lg">{CTA}</CheckoutLink>
             <span className="guarantee">100% money back guarantee</span>
           </div>
         </div>
@@ -348,7 +349,7 @@ export default function LandingPage() {
             <span className="sticky-cta__sep" aria-hidden="true">·</span>
             Last <span className="js-seat-count">11</span> seats left
           </div>
-          <a href="/product-checkout" className="btn btn--cta sticky-cta__btn">Book Now → 81% OFF</a>
+          <CheckoutLink className="btn btn--cta sticky-cta__btn">Book Now → 81% OFF</CheckoutLink>
         </div>
       </aside>
 

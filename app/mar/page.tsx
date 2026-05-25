@@ -1,5 +1,6 @@
 import Footer from '@/components/Footer';
 import LandingClient, { REVIEWS_DATA } from '@/components/LandingClient';
+import CheckoutLink from '@/components/CheckoutLink';
 import { brand, pricing, schedule } from '@/lib/config';
 
 const VIDEO_TESTIMONIALS = [
@@ -81,12 +82,12 @@ export default function LandingPageMar() {
               </div>
 
               <div className="cta-block hero__cta">
-                <a href="/product-checkout" className="btn btn--cta btn--lg hero__cta-btn">
+                <CheckoutLink className="btn btn--cta btn--lg hero__cta-btn">
                   <span className="hero__cta-btn__main">
                     आत्ताच बुक करा – 81% OFF मिळवा
                     <span className="hero__cta-btn__arrow" aria-hidden="true">→</span>
                   </span>
-                </a>
+                </CheckoutLink>
                 <span className="guarantee">100% मनी-बॅक गॅरंटी</span>
               </div>
 
@@ -126,7 +127,7 @@ export default function LandingPageMar() {
           </p>
 
           <div className="cta-block reveal">
-            <a href="/product-checkout" className="btn btn--cta btn--lg">{CTA}</a>
+            <CheckoutLink className="btn btn--cta btn--lg">{CTA}</CheckoutLink>
             <span className="guarantee">100% मनी-बॅक गॅरंटी</span>
           </div>
         </div>
@@ -171,7 +172,7 @@ export default function LandingPageMar() {
             </article>
           </div>
           <div className="cta-block mt-3 reveal">
-            <a href="/product-checkout" className="btn btn--cta btn--lg">{CTA}</a>
+            <CheckoutLink className="btn btn--cta btn--lg">{CTA}</CheckoutLink>
             <span className="guarantee">100% मनी-बॅक गॅरंटी</span>
           </div>
         </div>
@@ -222,7 +223,7 @@ export default function LandingPageMar() {
           </div>
 
           <div className="cta-block reveal mt-3">
-            <a href="/product-checkout" className="btn btn--cta btn--lg">{CTA}</a>
+            <CheckoutLink className="btn btn--cta btn--lg">{CTA}</CheckoutLink>
             <span className="guarantee">100% मनी-बॅक गॅरंटी</span>
           </div>
         </div>
@@ -287,7 +288,7 @@ export default function LandingPageMar() {
           </div>
 
           <div className="cta-block reveal mt-3">
-            <a href="/product-checkout" className="btn btn--cta btn--lg">{CTA}</a>
+            <CheckoutLink className="btn btn--cta btn--lg">{CTA}</CheckoutLink>
             <span className="guarantee">100% मनी-बॅक गॅरंटी</span>
           </div>
         </div>
@@ -338,7 +339,7 @@ export default function LandingPageMar() {
             <span className="sticky-cta__sep" aria-hidden="true">·</span>
             फक्त <span className="js-seat-count">11</span> जागा शिल्लक
           </div>
-          <a href="/product-checkout" className="btn btn--cta sticky-cta__btn">आत्ताच बुक करा → 81% OFF</a>
+          <CheckoutLink className="btn btn--cta sticky-cta__btn">आत्ताच बुक करा → 81% OFF</CheckoutLink>
         </div>
       </aside>
 
