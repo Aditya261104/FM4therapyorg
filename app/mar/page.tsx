@@ -1,6 +1,7 @@
 import Footer from '@/components/Footer';
 import LandingClient, { REVIEWS_DATA } from '@/components/LandingClient';
 import CheckoutLink from '@/components/CheckoutLink';
+import SeatCounter from '@/components/SeatCounter';
 import { brand, pricing, schedule } from '@/lib/config';
 
 const VIDEO_TESTIMONIALS = [
@@ -30,7 +31,7 @@ export default function LandingPageMar() {
     <>
       {/* Top urgency strip */}
       <div className="topbar">
-        <strong>आत्ताच बुक करा → 81% OFF मिळवा</strong> · फक्त <span className="js-seat-count">11</span> जागा शिल्लक · जागा संपताच Booking बंद!
+        <strong>आत्ताच बुक करा → 81% OFF मिळवा</strong> · फक्त <span className="js-seat-count">50</span> जागा शिल्लक · जागा संपताच Booking बंद!
       </div>
 
       {/* HERO */}
@@ -92,7 +93,7 @@ export default function LandingPageMar() {
               </div>
 
               <div className="scarcity">
-                फक्त <span className="js-seat-count">11</span> जागा शिल्लक
+                फक्त <span className="js-seat-count">50</span> जागा शिल्लक
                 <span className="scarcity__sep"> — </span>
                 <span className="scarcity__line2">जागा संपताच Booking बंद!</span>
               </div>
@@ -337,13 +338,14 @@ export default function LandingPageMar() {
           <div className="sticky-cta__copy">
             <strong><s className="price-old">₹{pricing.client.originalInr}</s> <span className="now">₹{pricing.client.inr}</span></strong>
             <span className="sticky-cta__sep" aria-hidden="true">·</span>
-            फक्त <span className="js-seat-count">11</span> जागा शिल्लक
+            फक्त <span className="js-seat-count">50</span> जागा शिल्लक
           </div>
           <CheckoutLink className="btn btn--cta sticky-cta__btn">आत्ताच बुक करा → 81% OFF</CheckoutLink>
         </div>
       </aside>
 
       <LandingClient />
+      <SeatCounter />
     </>
   );
 }

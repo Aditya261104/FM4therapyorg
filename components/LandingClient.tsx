@@ -59,31 +59,8 @@ export default function LandingClient() {
       revealNodes.forEach(el => revealIO.observe(el));
     }
 
-    // 3. Seat scarcity countdown
-    const KEY = 'fm4_seats';
-    const INIT = 115;
-    const readSeats = () => {
-      const v = parseInt(localStorage.getItem(KEY) || '', 10);
-      return Number.isFinite(v) && v > 0 ? v : INIT;
-    };
-    const paintSeats = (n: number) => {
-      document.querySelectorAll<HTMLElement>('.js-seat-count').forEach(el => {
-        if (el.textContent?.trim() === String(n)) return;
-        el.textContent = String(n);
-        el.classList.remove('seat-flash');
-        void el.offsetWidth;
-        el.classList.add('seat-flash');
-      });
-    };
-    let seats = readSeats();
-    localStorage.setItem(KEY, String(seats));
-    paintSeats(seats);
-    const seatTimer = setInterval(() => {
-      seats = seats - (1 + Math.floor(Math.random() * 4));
-      if (seats <= 0) seats = INIT;
-      localStorage.setItem(KEY, String(seats));
-      paintSeats(seats);
-    }, 60000);
+    // 3. Seat scarcity countdown — now in components/SeatCounter.tsx so the
+    //    checkout page can mount it independently.
 
     // 4. Instructor slider (3 images, autoplay, no pause-on-hover)
     const slides = document.querySelectorAll<HTMLElement>('#instructorSlider .slider__slide');
@@ -205,7 +182,6 @@ export default function LandingClient() {
 
     // Cleanup
     return () => {
-      clearInterval(seatTimer);
       if (sliderTimer) clearInterval(sliderTimer);
       window.removeEventListener('scroll', tlUpdate);
       window.removeEventListener('resize', tlUpdate);

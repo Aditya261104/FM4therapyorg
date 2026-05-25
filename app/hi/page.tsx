@@ -1,6 +1,7 @@
 import Footer from '@/components/Footer';
 import LandingClient, { REVIEWS_DATA } from '@/components/LandingClient';
 import CheckoutLink from '@/components/CheckoutLink';
+import SeatCounter from '@/components/SeatCounter';
 import { brand, pricing, schedule } from '@/lib/config';
 
 const VIDEO_TESTIMONIALS = [
@@ -30,7 +31,7 @@ export default function LandingPageHi() {
     <>
       {/* Top urgency strip */}
       <div className="topbar">
-        <strong>अभी बुक करें → 81% OFF पाएं</strong> · केवल <span className="js-seat-count">11</span> सीट्स बाकी · सीटें भरते ही बुकिंग बंद!
+        <strong>अभी बुक करें → 81% OFF पाएं</strong> · केवल <span className="js-seat-count">50</span> सीट्स बाकी · सीटें भरते ही बुकिंग बंद!
       </div>
 
       {/* HERO */}
@@ -92,7 +93,7 @@ export default function LandingPageHi() {
               </div>
 
               <div className="scarcity">
-                केवल <span className="js-seat-count">11</span> सीट्स बाकी
+                केवल <span className="js-seat-count">50</span> सीट्स बाकी
                 <span className="scarcity__sep"> — </span>
                 <span className="scarcity__line2">सीटें भरते ही बुकिंग बंद!</span>
               </div>
@@ -347,13 +348,14 @@ export default function LandingPageHi() {
           <div className="sticky-cta__copy">
             <strong><s className="price-old">₹{pricing.client.originalInr}</s> <span className="now">₹{pricing.client.inr}</span></strong>
             <span className="sticky-cta__sep" aria-hidden="true">·</span>
-            केवल <span className="js-seat-count">11</span> सीट्स बाकी
+            केवल <span className="js-seat-count">50</span> सीट्स बाकी
           </div>
           <CheckoutLink className="btn btn--cta sticky-cta__btn">अभी बुक करें → 81% OFF</CheckoutLink>
         </div>
       </aside>
 
       <LandingClient />
+      <SeatCounter />
     </>
   );
 }
