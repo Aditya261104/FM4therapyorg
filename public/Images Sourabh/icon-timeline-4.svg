@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true">
+  <defs>
+    <filter id="t4Shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="0.9"/>
+      <feOffset dx="0.4" dy="1.2"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.45"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <!-- Skin: warm peach gradient -->
+    <radialGradient id="t4Skin" cx="35%" cy="30%" r="80%">
+      <stop offset="0%"   stop-color="#FFE3CC"/>
+      <stop offset="55%"  stop-color="#F0B786"/>
+      <stop offset="100%" stop-color="#9C6541"/>
+    </radialGradient>
+    <!-- Hair: warm brown -->
+    <linearGradient id="t4Hair" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#5C3A21"/>
+      <stop offset="100%" stop-color="#2A1810"/>
+    </linearGradient>
+    <!-- Activewear: green tones -->
+    <linearGradient id="t4Wear" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#4FBB80"/>
+      <stop offset="100%" stop-color="#00753A"/>
+    </linearGradient>
+    <linearGradient id="t4Pants" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#1F3D4E"/>
+      <stop offset="100%" stop-color="#0E1F2A"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Floor shadow -->
+  <ellipse cx="32" cy="55" rx="22" ry="2.2" fill="#000" opacity="0.18"/>
+
+  <!-- Back leg (planted, bent) — drawn first so the front leg overlaps -->
+  <path d="M30 36c-3 4-7 9-10 16h6c3-6 6-10 8-12z" fill="url(#t4Pants)" filter="url(#t4Shadow)"/>
+
+  <!-- Front extended leg (lunge) -->
+  <path d="M28 32c5 0 12 1 17 0l1 5c-5 1-12 2-17 2z" fill="url(#t4Pants)" filter="url(#t4Shadow)"/>
+  <!-- Front foot -->
+  <ellipse cx="46.5" cy="35" rx="3.5" ry="1.6" fill="#1A1A1A"/>
+
+  <!-- Torso (bent forward in stretch) -->
+  <path d="M19 24c-1-6 3-11 8-11 6 0 9 5 8 11l-2 12c-1 3-4 4-6 4s-5-1-6-4z"
+        fill="url(#t4Wear)" filter="url(#t4Shadow)"/>
+  <!-- Torso highlight -->
+  <path d="M22 17c1-3 3-3 5-3" stroke="#FFFFFF" stroke-width="1.2" opacity="0.4" stroke-linecap="round" fill="none"/>
+
+  <!-- Head -->
+  <circle cx="27" cy="11" r="6" fill="url(#t4Skin)" filter="url(#t4Shadow)"/>
+  <!-- Hair (tied back) -->
+  <path d="M21 9c0-4 3-6 6-6s6 2 6 6c-1-1-3-2-6-2s-5 1-6 2z" fill="url(#t4Hair)"/>
+  <!-- Ponytail -->
+  <path d="M33 11c2 1 3 4 2 7l-3 -1z" fill="url(#t4Hair)"/>
+
+  <!-- Arms reaching toward front toes -->
+  <path d="M22 22c2 5 8 10 18 14l-1 -4c-7-3-13-7-15-12z"
+        fill="url(#t4Skin)" stroke="#7A4A2A" stroke-width="0.4" filter="url(#t4Shadow)"/>
+
+  <!-- Flexibility motion arc (sweeping gold ribbon) -->
+  <path d="M52 14c8 6 8 18 0 26" stroke="#FFC621" stroke-width="2.2"
+        stroke-linecap="round" fill="none" opacity="0.85"/>
+  <path d="M47 35l5 5 5-5" stroke="#FFC621" stroke-width="2.2"
+        stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.85"/>
+</svg>

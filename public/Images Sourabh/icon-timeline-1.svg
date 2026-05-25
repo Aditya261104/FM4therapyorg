@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true">
+  <defs>
+    <!-- Soft drop shadow used under each main element -->
+    <filter id="t1Shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="0.9"/>
+      <feOffset dx="0.4" dy="1.2"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.45"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <!-- Glass lens — radial gradient for the convex bubble look -->
+    <radialGradient id="t1Lens" cx="38%" cy="32%" r="78%">
+      <stop offset="0%"   stop-color="#FFFFFF"/>
+      <stop offset="35%"  stop-color="#E0F4E5"/>
+      <stop offset="70%"  stop-color="#9BD5B0"/>
+      <stop offset="100%" stop-color="#3FA866"/>
+    </radialGradient>
+    <!-- Metal rim — top-light to bottom-shadow -->
+    <linearGradient id="t1Rim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#4FBB80"/>
+      <stop offset="55%"  stop-color="#00984B"/>
+      <stop offset="100%" stop-color="#005A2D"/>
+    </linearGradient>
+    <!-- Handle wood/metal — darker version -->
+    <linearGradient id="t1Handle" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#1E6B3A"/>
+      <stop offset="50%"  stop-color="#00753A"/>
+      <stop offset="100%" stop-color="#003D1F"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Floor shadow under the whole icon -->
+  <ellipse cx="34" cy="58" rx="20" ry="2.2" fill="#000" opacity="0.18"/>
+
+  <!-- Handle (sits behind the rim) -->
+  <rect x="35" y="35" width="6" height="22"
+        transform="rotate(-45 38 46)"
+        rx="3" fill="url(#t1Handle)" filter="url(#t1Shadow)"/>
+  <!-- Handle highlight -->
+  <rect x="36" y="36" width="1.4" height="20"
+        transform="rotate(-45 38 46)"
+        rx="0.7" fill="#FFFFFF" opacity="0.35"/>
+
+  <!-- Outer metal rim -->
+  <circle cx="27" cy="27" r="17" fill="url(#t1Rim)" filter="url(#t1Shadow)"/>
+  <!-- Inner lens (glass) -->
+  <circle cx="27" cy="27" r="13" fill="url(#t1Lens)"/>
+  <!-- Specular highlight on the glass -->
+  <ellipse cx="22" cy="22" rx="4.5" ry="2.6" fill="#FFFFFF" opacity="0.75" transform="rotate(-30 22 22)"/>
+  <!-- Subtle bottom-rim shadow inside lens -->
+  <path d="M16 30c4 6 18 6 22 0" stroke="#1E6B3A" stroke-width="1.6"
+        stroke-linecap="round" fill="none" opacity="0.35"/>
+
+  <!-- Medical cross — root cause cue -->
+  <path d="M27 20v14M20 27h14" stroke="#FFFFFF" stroke-width="3.4"
+        stroke-linecap="round" filter="url(#t1Shadow)"/>
+  <path d="M27 20v14M20 27h14" stroke="#00753A" stroke-width="1.3"
+        stroke-linecap="round" opacity="0.55"/>
+</svg>

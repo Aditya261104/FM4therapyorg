@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true">
+  <defs>
+    <filter id="t3Shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1"/>
+      <feOffset dx="0.4" dy="1.4"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.5"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <!-- Heavy weight plates — cool metallic green with bright highlight + deep rim -->
+    <linearGradient id="t3Plate" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#4FBB80"/>
+      <stop offset="35%"  stop-color="#00984B"/>
+      <stop offset="100%" stop-color="#003D1F"/>
+    </linearGradient>
+    <linearGradient id="t3PlateInner" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#6CC994"/>
+      <stop offset="100%" stop-color="#00753A"/>
+    </linearGradient>
+    <!-- Chrome bar -->
+    <linearGradient id="t3Bar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#F8F8F8"/>
+      <stop offset="40%"  stop-color="#C8CED2"/>
+      <stop offset="65%"  stop-color="#9098A0"/>
+      <stop offset="100%" stop-color="#4A5058"/>
+    </linearGradient>
+    <linearGradient id="t3BarHi" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#FFFFFF" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Floor shadow -->
+  <ellipse cx="32" cy="50" rx="26" ry="2.4" fill="#000" opacity="0.22"/>
+
+  <!-- Bar (handle) -->
+  <rect x="20" y="29" width="24" height="6" rx="2.5" fill="url(#t3Bar)" filter="url(#t3Shadow)"/>
+  <!-- Bar specular highlight -->
+  <rect x="21" y="29.5" width="22" height="1.6" rx="0.8" fill="url(#t3BarHi)"/>
+  <!-- Bar knurl marks -->
+  <path d="M27 31v2M30 31v2M33 31v2M36 31v2" stroke="#3A4046" stroke-width="0.5" stroke-linecap="round"/>
+
+  <!-- Left outer plate -->
+  <rect x="6"  y="18" width="10" height="28" rx="3" fill="url(#t3Plate)" filter="url(#t3Shadow)"/>
+  <rect x="7"  y="19" width="3"  height="26" rx="1.5" fill="#FFFFFF" opacity="0.25"/>
+  <!-- Left inner plate -->
+  <rect x="16" y="22" width="6"  height="20" rx="2" fill="url(#t3PlateInner)"/>
+  <rect x="16.7" y="23" width="1.6" height="18" rx="0.8" fill="#FFFFFF" opacity="0.3"/>
+
+  <!-- Right inner plate -->
+  <rect x="42" y="22" width="6"  height="20" rx="2" fill="url(#t3PlateInner)"/>
+  <rect x="42.7" y="23" width="1.6" height="18" rx="0.8" fill="#FFFFFF" opacity="0.3"/>
+  <!-- Right outer plate -->
+  <rect x="48" y="18" width="10" height="28" rx="3" fill="url(#t3Plate)" filter="url(#t3Shadow)"/>
+  <rect x="49" y="19" width="3"  height="26" rx="1.5" fill="#FFFFFF" opacity="0.25"/>
+
+  <!-- Brand sticker / center hub -->
+  <circle cx="11"  cy="32" r="2.2" fill="#00753A"/>
+  <circle cx="53"  cy="32" r="2.2" fill="#00753A"/>
+</svg>

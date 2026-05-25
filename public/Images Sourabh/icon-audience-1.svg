@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" aria-hidden="true">
+  <defs>
+    <!-- Card body: brand green with a subtle vertical sheen -->
+    <linearGradient id="a1Card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#4FBB80"/>
+      <stop offset="55%"  stop-color="#00984B"/>
+      <stop offset="100%" stop-color="#005A2D"/>
+    </linearGradient>
+    <!-- Inner glow / glassy highlight on the card -->
+    <radialGradient id="a1CardGloss" cx="30%" cy="20%" r="80%">
+      <stop offset="0%"   stop-color="#FFFFFF" stop-opacity="0.28"/>
+      <stop offset="60%"  stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Skin: warm peach -->
+    <radialGradient id="a1Skin" cx="35%" cy="30%" r="80%">
+      <stop offset="0%"   stop-color="#FFE3CC"/>
+      <stop offset="60%"  stop-color="#F0B786"/>
+      <stop offset="100%" stop-color="#9C6541"/>
+    </radialGradient>
+    <!-- Hair: short dark -->
+    <linearGradient id="a1Hair" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#3A2820"/>
+      <stop offset="100%" stop-color="#1A100A"/>
+    </linearGradient>
+    <!-- Navy suit -->
+    <linearGradient id="a1Suit" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#2E4055"/>
+      <stop offset="100%" stop-color="#0F1A26"/>
+    </linearGradient>
+    <linearGradient id="a1SuitHi" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#FFFFFF" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <!-- Tie: gold -->
+    <linearGradient id="a1Tie" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#FFE082"/>
+      <stop offset="100%" stop-color="#C68A12"/>
+    </linearGradient>
+    <!-- Briefcase: warm tan leather -->
+    <linearGradient id="a1Brief" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#C2925A"/>
+      <stop offset="100%" stop-color="#6B4423"/>
+    </linearGradient>
+    <filter id="a1Shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="0.8"/>
+      <feOffset dx="0.3" dy="1.2"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.5"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Card -->
+  <rect x="2" y="2" width="76" height="76" rx="18" fill="url(#a1Card)"/>
+  <rect x="2" y="2" width="76" height="76" rx="18" fill="url(#a1CardGloss)"/>
+
+  <!-- Floor shadow under figure -->
+  <ellipse cx="38" cy="69" rx="22" ry="2.6" fill="#000" opacity="0.22"/>
+
+  <!-- Suit jacket -->
+  <path d="M16 70c0-12 8-20 22-20s22 8 22 20v6H16z" fill="url(#a1Suit)" filter="url(#a1Shadow)"/>
+  <path d="M16 70c0-12 8-20 22-20s22 8 22 20v6H16z" fill="url(#a1SuitHi)"/>
+  <!-- Lapels -->
+  <path d="M26 50l12 16 12-16-4-2-8 6-8-6z" fill="#1B2939"/>
+  <!-- White shirt collar peek -->
+  <path d="M34 50l4 8 4-8-2-1-2 2-2-2z" fill="#FFFFFF"/>
+  <!-- Tie knot + body -->
+  <path d="M36.5 56l1.5 2 1.5-2-1.5-1.5z" fill="url(#a1Tie)"/>
+  <path d="M37 58h2l2 12-3 1.5-3-1.5z" fill="url(#a1Tie)"/>
+  <path d="M37 58h0.6v12l-0.6-0.3z" fill="#FFFFFF" opacity="0.35"/>
+
+  <!-- Neck -->
+  <rect x="34" y="42" width="8" height="9" rx="2" fill="url(#a1Skin)"/>
+  <!-- Head -->
+  <circle cx="38" cy="32" r="10" fill="url(#a1Skin)" filter="url(#a1Shadow)"/>
+  <!-- Hair -->
+  <path d="M28 28c0-7 5-12 10-12s10 5 10 12c-2-3-5-4-10-4s-8 1-10 4z" fill="url(#a1Hair)"/>
+  <!-- Eyes -->
+  <ellipse cx="34.4" cy="32" rx="0.9" ry="1.2" fill="#1A1A1A"/>
+  <ellipse cx="41.6" cy="32" rx="0.9" ry="1.2" fill="#1A1A1A"/>
+  <!-- Smile -->
+  <path d="M35 36c1 1.4 5 1.4 6 0" stroke="#7A3A28" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+
+  <!-- Briefcase to the right -->
+  <rect x="56" y="58" width="18" height="14" rx="2" fill="url(#a1Brief)" filter="url(#a1Shadow)"/>
+  <rect x="56" y="58" width="18" height="3" rx="1" fill="#3A2415" opacity="0.4"/>
+  <!-- Briefcase handle -->
+  <path d="M60 58v-4h10v4" stroke="#3A2415" stroke-width="2" fill="none" stroke-linejoin="round"/>
+  <!-- Clasp -->
+  <rect x="63" y="63" width="4" height="2" rx="0.6" fill="#FFE082"/>
+</svg>

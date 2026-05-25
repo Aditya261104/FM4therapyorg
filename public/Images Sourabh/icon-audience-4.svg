@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" aria-hidden="true">
+  <defs>
+    <linearGradient id="a4Card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#4FBB80"/>
+      <stop offset="55%"  stop-color="#00984B"/>
+      <stop offset="100%" stop-color="#005A2D"/>
+    </linearGradient>
+    <radialGradient id="a4CardGloss" cx="30%" cy="20%" r="80%">
+      <stop offset="0%"   stop-color="#FFFFFF" stop-opacity="0.28"/>
+      <stop offset="60%"  stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Skin tones — mom slightly cooler, child slightly warmer/peachier -->
+    <radialGradient id="a4SkinMom" cx="35%" cy="30%" r="80%">
+      <stop offset="0%"   stop-color="#FFE3CC"/>
+      <stop offset="60%"  stop-color="#F0B786"/>
+      <stop offset="100%" stop-color="#9C6541"/>
+    </radialGradient>
+    <radialGradient id="a4SkinKid" cx="35%" cy="30%" r="80%">
+      <stop offset="0%"   stop-color="#FFEDD8"/>
+      <stop offset="60%"  stop-color="#F6C49A"/>
+      <stop offset="100%" stop-color="#A67050"/>
+    </radialGradient>
+    <!-- Mom's hair: chestnut brown -->
+    <linearGradient id="a4HairMom" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#5C3A21"/>
+      <stop offset="100%" stop-color="#2A1810"/>
+    </linearGradient>
+    <!-- Kid's hair: light brown -->
+    <linearGradient id="a4HairKid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#A87750"/>
+      <stop offset="100%" stop-color="#5C3A21"/>
+    </linearGradient>
+    <!-- Mom's dress: rose/coral -->
+    <linearGradient id="a4Dress" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#F09AA8"/>
+      <stop offset="100%" stop-color="#8B3046"/>
+    </linearGradient>
+    <!-- Kid's tee: soft yellow -->
+    <linearGradient id="a4Tee" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#FFE082"/>
+      <stop offset="100%" stop-color="#C68A12"/>
+    </linearGradient>
+    <filter id="a4Shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="0.8"/>
+      <feOffset dx="0.3" dy="1.2"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.5"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect x="2" y="2" width="76" height="76" rx="18" fill="url(#a4Card)"/>
+  <rect x="2" y="2" width="76" height="76" rx="18" fill="url(#a4CardGloss)"/>
+
+  <!-- Floor shadow -->
+  <ellipse cx="40" cy="73" rx="28" ry="2.4" fill="#000" opacity="0.22"/>
+
+  <!-- =================== MOM (left) =================== -->
+  <!-- Dress (A-line) -->
+  <path d="M10 72L16 44c0-3 5-6 10-6s10 3 10 6l6 28z"
+        fill="url(#a4Dress)" filter="url(#a4Shadow)"/>
+  <!-- Dress highlight strip -->
+  <path d="M18 46c1 8 2 16 4 24" stroke="#FFFFFF" stroke-width="1" opacity="0.4" fill="none" stroke-linecap="round"/>
+  <!-- Neck -->
+  <rect x="22" y="36" width="8" height="8" rx="2" fill="url(#a4SkinMom)"/>
+  <!-- Head -->
+  <circle cx="26" cy="28" r="9" fill="url(#a4SkinMom)" filter="url(#a4Shadow)"/>
+  <!-- Hair (shoulder-length, parted) -->
+  <path d="M16 28c0-7 5-12 10-12s10 5 10 12c-2-3-5-4-10-4s-8 1-10 4z"
+        fill="url(#a4HairMom)"/>
+  <!-- Side hair flowing -->
+  <path d="M16 28c-1 6 0 12 3 16M36 28c1 6 0 12-3 16"
+        stroke="#2A1810" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <!-- Eyes -->
+  <ellipse cx="22.5" cy="28" rx="0.9" ry="1.2" fill="#1A1A1A"/>
+  <ellipse cx="29.5" cy="28" rx="0.9" ry="1.2" fill="#1A1A1A"/>
+  <!-- Smile -->
+  <path d="M23 32c1.2 1.4 5 1.4 6 0" stroke="#7A3A28" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+  <!-- Lipstick blush -->
+  <path d="M24 32.5c1 0.8 3 0.8 4 0" stroke="#C2495F" stroke-width="0.8" fill="none" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- =================== CHILD (right) =================== -->
+  <!-- Tee + shorts -->
+  <path d="M44 72v-12c0-6 4-10 10-10s10 4 10 10v12z"
+        fill="url(#a4Tee)" filter="url(#a4Shadow)"/>
+  <!-- Tee neckline -->
+  <ellipse cx="54" cy="50" rx="4" ry="1.4" fill="#C68A12"/>
+  <!-- Neck -->
+  <rect x="51" y="46" width="6" height="6" rx="1.5" fill="url(#a4SkinKid)"/>
+  <!-- Head -->
+  <circle cx="54" cy="40" r="7.5" fill="url(#a4SkinKid)" filter="url(#a4Shadow)"/>
+  <!-- Hair (short, bowl cut with tuft) -->
+  <path d="M47 38c0-5 3-8 7-8s7 3 7 8c-1-2-4-3-7-3s-6 1-7 3z" fill="url(#a4HairKid)"/>
+  <path d="M53 31c0-3 4-3 4 0" fill="url(#a4HairKid)"/>
+  <!-- Eyes -->
+  <ellipse cx="51.5" cy="40" rx="0.8" ry="1.1" fill="#1A1A1A"/>
+  <ellipse cx="56.5" cy="40" rx="0.8" ry="1.1" fill="#1A1A1A"/>
+  <!-- Big smile -->
+  <path d="M52 43c1 1.2 4 1.2 5 0" stroke="#7A3A28" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+  <!-- Rosy cheeks -->
+  <circle cx="49.5" cy="42" r="1" fill="#F09AA8" opacity="0.7"/>
+  <circle cx="58.5" cy="42" r="1" fill="#F09AA8" opacity="0.7"/>
+
+  <!-- =================== LINKED HANDS =================== -->
+  <!-- Mom's hand -->
+  <ellipse cx="38" cy="55" rx="3" ry="2.4" fill="url(#a4SkinMom)" filter="url(#a4Shadow)"/>
+  <!-- Kid's hand -->
+  <ellipse cx="44" cy="55" rx="2.6" ry="2.2" fill="url(#a4SkinKid)" filter="url(#a4Shadow)"/>
+  <!-- Connection -->
+  <rect x="36" y="54" width="10" height="2.4" rx="1.2" fill="url(#a4SkinMom)"/>
+
+  <!-- Heart above (love between them) -->
+  <path d="M38 14c-2.2-3 2.6-5 3.6-2 1-3 5.8-1 3.6 2l-3.6 4.2z"
+        fill="#FF6B6B" filter="url(#a4Shadow)"/>
+  <path d="M39.2 14.2c-0.6-1 0.8-1.4 1-0.5" stroke="#FFFFFF" stroke-width="0.6"
+        opacity="0.8" fill="none" stroke-linecap="round"/>
+</svg>
