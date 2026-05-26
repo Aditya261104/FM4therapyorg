@@ -271,8 +271,8 @@ export default function LandingPage() {
               <div className="slider__slide" style={{ backgroundImage: `url('/Images%20Sourabh/sourabh%20images3.png')` }} role="img" aria-label="Sourobh Kulkarni — image 3"></div>
             </div>
             <div className="instructor__body">
-              <h3>With 19 years of expertise in the Health &amp; Fitness industry</h3>
-              <p>Sourobh Kulkarni has helped over <strong>10,000 clients</strong> overcome chronic pain, including discomfort in the back, neck, and knees, as well as various other mobility challenges.</p>
+              <h3>With 20 years of expertise in the Health &amp; Fitness industry</h3>
+              <p>Sourobh Kulkorni has helped over <strong>30,000 clients</strong> overcome chronic pain, including discomfort in the back, neck, and knees, as well as various other mobility challenges.</p>
             </div>
           </div>
 
