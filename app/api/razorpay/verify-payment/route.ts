@@ -1,9 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import Razorpay from 'razorpay';
 import { brand, pricing } from '@/lib/config';
 
 const CUSTOM_EVENT_NAME = 'sales';
 const META_GRAPH_VERSION = 'v25.0';
+
+// Lazy Razorpay client — same pattern as create-order. Used here to fetch the
+// verified payment after HMAC succeeds so Pabbly + CAPI can ship the actual
+// charged amount rather than an env-config constant. Stays null if env vars
+// aren't set; consumers fall back to pricing.inr / pricing.currency.
+let razorpay: Razorpay | null = null;
+if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+  razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+  });
+}
 
 function sha256(value: string): string {
   return crypto.createHash('sha256').update(value).digest('hex');
@@ -30,6 +43,8 @@ async function sendMetaCapiEvent(params: {
   city: string;
   countryCode: string;    // 2-letter ISO
   eventSourceUrl: string;
+  value: number;          // verified amount in major units (e.g. rupees, not paise)
+  currency: string;       // verified currency ISO code, e.g. INR
   fbc: string | undefined;
   fbp: string | undefined;
   clientIp: string | undefined;
@@ -75,8 +90,8 @@ async function sendMetaCapiEvent(params: {
       ...(params.clientIp        && { client_ip_address: params.clientIp }),
     },
     custom_data: {
-      currency:   brand.capiCurrency,
-      value:      pricing.inr,
+      currency:   params.currency,
+      value:      params.value,
       payment_id: params.paymentId,
     },
   };
@@ -163,7 +178,48 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // ✅ Signature verified — build Pabbly payload
+    // ✅ Signature verified.
+    console.log('[verify-payment] Verified purchase:', { paymentId, email: customer.email });
+
+    // Test-mode gate. When PRICE_INR=1 (Vercel preview / staging), skip ALL
+    // downstream side effects (including the Razorpay payment fetch below) so
+    // ₹1 sanity-check payments don't pollute Meta Events Manager / Pabbly and
+    // don't burn unnecessary Razorpay API calls. Set PRICE_INR=97 in
+    // production to re-enable. (The QA-coupon path in /api/checkout/free-order
+    // is independent — it has its own is_test=yes tag.)
+    if (!pricing.trackingEnabled) {
+      console.log('[verify-payment] Tracking disabled (PRICE_INR=1) — skipping Pabbly + Meta CAPI');
+      return NextResponse.json({ success: true, paymentId });
+    }
+
+    // ── Fetch the verified amount + currency from Razorpay ────────────────
+    // Source of truth for what was actually charged, instead of relying on
+    // the env-derived pricing.inr constant. If anything fails (Razorpay API
+    // down, malformed response, missing client), fall back to pricing.inr /
+    // pricing.currency so the transaction still gets logged + tracked.
+    let verifiedAmountInRupees = pricing.inr;
+    let verifiedCurrency = pricing.currency;
+    if (razorpay) {
+      try {
+        const payment = await razorpay.payments.fetch(paymentId);
+        const rawAmount = typeof payment.amount === 'string'
+          ? parseInt(payment.amount, 10)
+          : payment.amount;
+        if (typeof rawAmount === 'number' && Number.isFinite(rawAmount) && rawAmount > 0) {
+          verifiedAmountInRupees = Math.round(rawAmount / 100);
+        }
+        if (typeof payment.currency === 'string' && payment.currency.length > 0) {
+          verifiedCurrency = payment.currency;
+        }
+        console.log(`[verify-payment] Razorpay payment fetched: amount=${verifiedAmountInRupees} ${verifiedCurrency}`);
+      } catch (err) {
+        console.error('[verify-payment] Razorpay payment fetch failed — falling back to env defaults:', err);
+      }
+    } else {
+      console.warn('[verify-payment] Razorpay client not configured — using env defaults for amount/currency');
+    }
+
+    // ── Build Pabbly payload with the verified amount + currency ──────────
     const now = new Date();
     const pabblyPayload = {
       first_name:        customer.firstName,
@@ -176,8 +232,8 @@ export async function POST(req: NextRequest) {
       customer_type:     customer.customerType,
       payment_id:        paymentId,
       order_id:          orderId,
-      amount:            pricing.amountString,
-      currency:          pricing.currency,
+      amount:            String(verifiedAmountInRupees),
+      currency:          verifiedCurrency,
       payment_date:      now.toLocaleDateString('en-IN', { timeZone: brand.paymentTimezone }),
       payment_time:      now.toLocaleTimeString('en-IN', { timeZone: brand.paymentTimezone }),
       payment_timestamp: now.toISOString(),
@@ -187,18 +243,6 @@ export async function POST(req: NextRequest) {
       utm_content:       utm?.content  ?? '',
       utm_term:          utm?.term     ?? '',
     };
-
-    console.log('[verify-payment] Verified purchase:', { paymentId, email: customer.email });
-
-    // Test-mode gate. When PRICE_INR=1 (Vercel preview / staging), skip ALL
-    // downstream side effects so ₹1 sanity-check payments don't pollute Meta
-    // Events Manager or the Pabbly automation sheet. Set PRICE_INR=97 in
-    // production to re-enable. (The QA-coupon path in /api/checkout/free-order
-    // is independent — it has its own is_test=yes tag.)
-    if (!pricing.trackingEnabled) {
-      console.log('[verify-payment] Tracking disabled (PRICE_INR=1) — skipping Pabbly + Meta CAPI');
-      return NextResponse.json({ success: true, paymentId });
-    }
 
     // Fire Pabbly webhook (non-blocking — errors never surface to the user)
     const webhookUrl = process.env.PABBLY_WEBHOOK_URL;
@@ -250,6 +294,8 @@ export async function POST(req: NextRequest) {
           city:              customer.city,
           countryCode:       customer.countryCode,
           eventSourceUrl:    resolvedEventSourceUrl,
+          value:             verifiedAmountInRupees,
+          currency:          verifiedCurrency,
           fbc, fbp, clientIp, clientUserAgent,
         });
         console.log('[verify-payment] Meta CAPI events sent (Purchase + sales)');
