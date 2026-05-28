@@ -140,7 +140,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const {
-      orderId, paymentId, signature, customer, utm, eventSourceUrl,
+      orderId, paymentId, signature, customer, utm, eventSourceUrl, fbclid,
     }: {
       orderId: string;
       paymentId: string;
@@ -148,6 +148,7 @@ export async function POST(req: NextRequest) {
       customer: CustomerData;
       utm: UtmData;
       eventSourceUrl?: string;
+      fbclid?: string;
     } = body;
 
     if (!orderId || !paymentId || !signature) {
@@ -219,9 +220,32 @@ export async function POST(req: NextRequest) {
       console.warn('[verify-payment] Razorpay client not configured — using env defaults for amount/currency');
     }
 
+    // ── Identity + context signals — shared by BOTH the Pabbly payload and
+    //    the Meta CAPI events below. Computed once here so the downstream CRM
+    //    (fed by Pabbly) gets the same matching signals the CAPI already uses.
+    const fbc = req.cookies.get('_fbc')?.value;
+    const fbp = req.cookies.get('_fbp')?.value;
+    const clientIp =
+      req.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
+      req.headers.get('x-real-ip') ??
+      undefined;
+    const clientUserAgent = req.headers.get('user-agent') ?? undefined;
+    // external_id matches the CAPI derivation exactly: sha256(lowercased email).
+    const externalId = sha256(customer.email.trim().toLowerCase());
+    const resolvedEventSourceUrl =
+      eventSourceUrl && eventSourceUrl.length > 0
+        ? eventSourceUrl
+        : 'https://www.fm4therapyindia.org/product-checkout';
+
     // ── Build Pabbly payload with the verified amount + currency ──────────
+    // EXISTING fields are preserved verbatim. The downstream-CRM fields
+    // (lead_id, created_at, fbc, fbp, client_ip_address, client_user_agent,
+    // external_id, event_source_url, is_test, purchase_event_id, fbclid) are
+    // ADDED so the CRM Sheet columns A–W can be mapped by Pabbly. Nothing is
+    // removed. Empty values are sent as '' (never undefined).
     const now = new Date();
     const pabblyPayload = {
+      // --- existing fields (unchanged) ---
       first_name:        customer.firstName,
       last_name:         customer.lastName,
       full_name:         `${customer.firstName} ${customer.lastName}`,
@@ -242,6 +266,18 @@ export async function POST(req: NextRequest) {
       utm_campaign:      utm?.campaign ?? '',
       utm_content:       utm?.content  ?? '',
       utm_term:          utm?.term     ?? '',
+      // --- added for the downstream CRM (Sheet cols A–W) ---
+      lead_id:           paymentId,
+      created_at:        now.toISOString(),
+      fbc:               fbc ?? '',
+      fbp:               fbp ?? '',
+      client_ip_address: clientIp ?? '',
+      client_user_agent: clientUserAgent ?? '',
+      external_id:       externalId,
+      event_source_url:  resolvedEventSourceUrl,
+      is_test:           'false',
+      purchase_event_id: paymentId,
+      fbclid:            fbclid ?? '',
     };
 
     // Fire Pabbly webhook (non-blocking — errors never surface to the user)
@@ -269,18 +305,9 @@ export async function POST(req: NextRequest) {
     const metaPixelId = process.env.META_PIXEL_ID;
     const metaAccessToken = process.env.META_CAPI_ACCESS_TOKEN;
     if (metaPixelId && metaAccessToken) {
-      const fbc = req.cookies.get('_fbc')?.value;
-      const fbp = req.cookies.get('_fbp')?.value;
-      const clientIp =
-        req.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
-        req.headers.get('x-real-ip') ??
-        undefined;
-      const clientUserAgent = req.headers.get('user-agent') ?? undefined;
+      // fbc / fbp / clientIp / clientUserAgent / externalId / resolvedEventSourceUrl
+      // are computed once above (shared with the Pabbly payload). Reuse them here.
       const fullPhone = `${customer.dialCode}${customer.phone}`;
-      const resolvedEventSourceUrl =
-        eventSourceUrl && eventSourceUrl.length > 0
-          ? eventSourceUrl
-          : `https://www.fm4therapyindia.org/product-checkout`;
 
       try {
         await sendMetaCapiEvent({

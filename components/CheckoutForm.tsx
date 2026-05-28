@@ -521,6 +521,10 @@ export default function CheckoutForm() {
 
       const eventSourceUrl =
         typeof window !== 'undefined' ? window.location.href : '';
+      // Forward the Facebook click ID (captured among the landing params) so
+      // the server can pass it to the downstream CRM. fbc is derived from this
+      // by the pixel, but fbclid is a useful backup for fbc reconstruction.
+      const fbclid = restoreLandingParams().fbclid ?? '';
 
       const verifyRes = await fetch('/api/razorpay/verify-payment', {
         method: 'POST',
@@ -541,6 +545,7 @@ export default function CheckoutForm() {
           },
           utm,
           eventSourceUrl,
+          fbclid,
         }),
       });
       const result = await verifyRes.json();
